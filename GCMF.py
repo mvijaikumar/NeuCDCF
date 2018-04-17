@@ -26,7 +26,6 @@ class GCMF(object):
         self.user_embeddings      = tf.Variable(self.initializer(shape=[self.num_users,
                                     self.num_factors]),
                                     dtype=tf.float32,name='user_embedding')
-        # cdcf initialize with zero
         self.user_cdcf_embeddings = tf.Variable(self.initializer(shape=[2*self.num_users, 
                                     self.num_factors]),
                                     dtype=tf.float32,name='user_cdcf_embedding')
@@ -49,12 +48,14 @@ class GCMF(object):
         self.item_embeds      = tf.nn.dropout (self.item_embeds, self.keep_prob_layer)
         
         self.user_add_output   = tf.add(self.user_embeds,self.user_cdcf_embeds) # cat 
+        #self.user_add_output   = tf.concat([self.user_embeds,self.user_cdcf_embeds],axis=1)
 
         self.multiplied_output = tf.multiply(self.user_add_output,self.item_embeds)
         self.multiplied_output = tf.nn.dropout(self.multiplied_output, self.keep_prob_layer)
         
         self.temp_pred_rating  = (self.rating_scale * tf.nn.sigmoid 
                                   (tf.matmul(self.multiplied_output,self.W_G_dp)))
+        print('\nMODIFIED KEY: sig \n') ##
         self.pred_rating       = tf.reshape(self.temp_pred_rating,shape=[-1])
                                       
     def define_loss(self,loss_type='all'):

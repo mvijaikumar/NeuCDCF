@@ -5,16 +5,14 @@ import math
 import argparse
 from time import time
 sys.path.append('./.')
-np.random.seed(7)
+np.random.seed(7) ## remove random during execution
 tf.set_random_seed(7)
 from Dataset import Dataset
-from Dataset_cold_start import Dataset_cold_start
 from Error_plot import Error_plot
 from Utilities import is_stopping_criterion_reached
 from Batch import Batch
 from Parameters import Parameters
 from NeuCDCF import NeuCDCF
-from Comparison import Comparison
 from Arguments import parse_args
 from Utilities import *
 from Pretrain import Pretrain
@@ -24,19 +22,12 @@ if __name__ == '__main__':
     print(args)
     filepath      = args.path + args.dataset
     result_file   = args.res_file
-    if args.cdcf=='yes': 
-        cdcf_flag  = True
-    else:
-        cdcf_flag = False 
+    cdcf_flag  = True
         
     # Data processing
     t1 = time()
     print('Data loading...')
-    if args.cold_start == 0:
-        dataset = Dataset(filepath,cdcf_flag)
-    else:
-        dataset = Dataset_cold_start(args.path,cdcf_flag)
-        print "cold-start"
+    dataset = Dataset(filepath,cdcf_flag)
         
     user_input,item_input,train_rating,train_domain               = dataset.trainArrQuadruplets
     valid_user_input, valid_item_input, valid_rating,valid_domain = dataset.validArrQuadruplets
@@ -106,13 +97,14 @@ if __name__ == '__main__':
                            model.true_rating:train_rating[shuff_batch],
                            model.domain_indices:train_domain[shuff_batch],
                            model.keep_prob:params.dp_keep_prob,
-                                   model.keep_prob_layer:params.keep_prob_layer,
-                                   model.valid_clip:0.0}
+                           model.keep_prob_layer:params.keep_prob_layer,
+                           model.valid_clip:0.0,
+                           model.cur_batch_size:bsiz }
             
                 (_,batch_loss,batch_reg_err,batch_recon_err,
                  batch_mse_train,batch_mae_train) = sess.run([train_step,model.loss,
                                         model.regularization_loss,model.recon_error,
-                                        model.mse_loss,model.mae_loss,
+                                        model.mse_loss,model.mae_loss
                                         ], feed_dict=feed_dict_train)
                 mae_train += batch_mae_train * bsiz
                 mse_train += batch_mse_train * bsiz
@@ -138,8 +130,9 @@ if __name__ == '__main__':
                            model.true_rating:valid_rating[valid_batch_indices],
                            model.domain_indices:valid_domain[valid_batch_indices],
                            model.keep_prob:1.0,
-                                   model.keep_prob_layer:1.0,
-                                       model.valid_clip:1.0}
+                           model.keep_prob_layer:1.0,
+                           model.valid_clip:1.0,
+                           model.cur_batch_size:bsiz}
                     
                     batch_mae_valid,batch_mse_valid = sess.run([model.mae_loss,model.mse_loss],
                                                feed_dict=feed_dict_valid)##
@@ -157,8 +150,9 @@ if __name__ == '__main__':
                            model.true_rating:test_rating[test_batch_indices],
                            model.domain_indices:test_domain[test_batch_indices],
                            model.keep_prob:1.0,
-                                   model.keep_prob_layer:1.0,
-                                      model.valid_clip:1.0}
+                           model.keep_prob_layer:1.0,
+                           model.valid_clip:1.0,
+                           model.cur_batch_size:bsiz}
                     
                     batch_mae_test,batch_mse_test = sess.run([model.mae_loss,model.mse_loss],
                                                feed_dict=feed_dict_test)

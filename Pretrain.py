@@ -1,7 +1,7 @@
 import tensorflow as tf
 import subprocess
 class Pretrain(object):
-    '''Only saves gcmf, mlp, sdae''' '''and neumf_gmf'''
+    '''Only saves gcmf, mlp, sed''' '''and neumf_gmf'''
     def __init__(self,params,sess):
         self.sess          = sess
         self.pretrain_path = params.pretrain_path
@@ -15,8 +15,8 @@ class Pretrain(object):
             self.save_gcmf(model)
         elif self.method == 'mlp':
             self.save_mlp(model)
-        elif self.method == 'sdae':
-            self.save_sdae(model)            
+        elif self.method == 'sed':
+            self.save_sed(model)            
         elif self.method == 'neumf_gmf':
             self.save_neumf_gmf(model)
     def load(self,model):
@@ -24,18 +24,18 @@ class Pretrain(object):
             self.load_gcmf(model)        
         elif self.method == 'mlp':
             self.load_mlp(model)
-        elif self.method == 'sdae':
-            self.load_sdae(model)
+        elif self.method == 'sed':
+            self.load_sed(model)
         elif self.method == 'gcmf_mlp':
             self.load_gcmf(model.gcmf_mlp_model)
             self.load_mlp(model.gcmf_mlp_model)
-        elif self.method == 'gcmf_sdae':
-            self.load_gcmf(model.gcmf_sdae_model)
-            self.load_sdae(model.gcmf_sdae_model)
-        elif self.method == 'gcmf_mlp_sdae':
-            self.load_gcmf(model.gcmf_mlp_sdae_model.gcmf_mlp_model)
-            self.load_mlp(model.gcmf_mlp_sdae_model.gcmf_mlp_model)
-            self.load_sdae(model.gcmf_mlp_sdae_model)
+        elif self.method == 'gcmf_sed':
+            self.load_gcmf(model.gcmf_sed_model)
+            self.load_sed(model.gcmf_sed_model)
+        elif self.method == 'gcmf_mlp_sed':
+            self.load_gcmf(model.gcmf_mlp_sed_model.gcmf_mlp_model)
+            self.load_mlp(model.gcmf_mlp_sed_model.gcmf_mlp_model)
+            self.load_sed(model.gcmf_mlp_sed_model)
         elif self.method == 'neumf_gmf':
             self.load_neumf_gmf(model)
         
@@ -59,24 +59,24 @@ class Pretrain(object):
         saver.save(self.sess,self.pretrain_path + '/mlp/mlp')
         print('Pretained weights are saved at: ' + self.pretrain_path + '/mlp/mlp')
         
-    def save_sdae(self,model):
-        saver = tf.train.Saver({'item_embeddings':model.sdae_model.item_embeddings,
-                                       'Weight_u1':model.sdae_model.Weight_u1,
-                                       'Weight_u2':model.sdae_model.Weight_u2,
-                                       'Weight_u3':model.sdae_model.Weight_u3,
-                                       'Weight_u4':model.sdae_model.Weight_u4,
-                                       'Weight_v1':model.sdae_model.Weight_v1,
-                                       'Weight_v2':model.sdae_model.Weight_v2,
-                                        'b_u1':model.sdae_model.b_u1,
-                                        'b_u2':model.sdae_model.b_u2,
-                                        'b_u3':model.sdae_model.b_u3,
-                                        'b_u4':model.sdae_model.b_u4,
-                                        'b_v1':model.sdae_model.b_v1,
-                                        'b_v2':model.sdae_model.b_v2,
-                                       'W_AE':model.sdae_model.W_AE})
-        subprocess.call(['mkdir','-p',self.pretrain_path + '/sdae/'])
-        saver.save(self.sess,self.pretrain_path+'/sdae/sdae')
-        print('Pretained weights are saved at: ' + self.pretrain_path + '/sdae/sdae')
+    def save_sed(self,model):
+        saver = tf.train.Saver({'item_embeddings':model.sed_model.item_embeddings,
+                                       'Weight_u1':model.sed_model.Weight_u1,
+                                       'Weight_u2':model.sed_model.Weight_u2,
+                                       'Weight_u3':model.sed_model.Weight_u3,
+                                       'Weight_u4':model.sed_model.Weight_u4,
+                                       'Weight_v1':model.sed_model.Weight_v1,
+                                       'Weight_v2':model.sed_model.Weight_v2,
+                                        'b_u1':model.sed_model.b_u1,
+                                        'b_u2':model.sed_model.b_u2,
+                                        'b_u3':model.sed_model.b_u3,
+                                        'b_u4':model.sed_model.b_u4,
+                                        'b_v1':model.sed_model.b_v1,
+                                        'b_v2':model.sed_model.b_v2,
+                                       'W_AE':model.sed_model.W_AE})
+        subprocess.call(['mkdir','-p',self.pretrain_path + '/sed/'])
+        saver.save(self.sess,self.pretrain_path+'/sed/sed')
+        print('Pretained weights are saved at: ' + self.pretrain_path + '/sed/sed')
     
     
     def save_neumf_gmf(self,model):
@@ -106,23 +106,23 @@ class Pretrain(object):
         saver.restore(self.sess, self.pretrain_path+'/mlp/mlp')
         print('Pretained weights are loaded from: ' + self.pretrain_path + '/mlp/mlp')
         
-    def load_sdae(self,model):        
-        saver = tf.train.Saver({'item_embeddings':model.sdae_model.item_embeddings,
-                                       'Weight_u1':model.sdae_model.Weight_u1,
-                                       'Weight_u2':model.sdae_model.Weight_u2,
-                                       'Weight_u3':model.sdae_model.Weight_u3,
-                                       'Weight_u4':model.sdae_model.Weight_u4,
-                                       'Weight_v1':model.sdae_model.Weight_v1,
-                                       'Weight_v2':model.sdae_model.Weight_v2,
-                                        'b_u1':model.sdae_model.b_u1,
-                                        'b_u2':model.sdae_model.b_u2,
-                                        'b_u3':model.sdae_model.b_u3,
-                                        'b_u4':model.sdae_model.b_u4,
-                                        'b_v1':model.sdae_model.b_v1,
-                                        'b_v2':model.sdae_model.b_v2,
-                                       'W_AE':model.sdae_model.W_AE})
-        saver.restore(self.sess,self.pretrain_path+'/sdae/sdae')
-        print('Pretained weights are loaded from: ' + self.pretrain_path + '/sdae/sdae')
+    def load_sed(self,model):        
+        saver = tf.train.Saver({'item_embeddings':model.sed_model.item_embeddings,
+                                       'Weight_u1':model.sed_model.Weight_u1,
+                                       'Weight_u2':model.sed_model.Weight_u2,
+                                       'Weight_u3':model.sed_model.Weight_u3,
+                                       'Weight_u4':model.sed_model.Weight_u4,
+                                       'Weight_v1':model.sed_model.Weight_v1,
+                                       'Weight_v2':model.sed_model.Weight_v2,
+                                        'b_u1':model.sed_model.b_u1,
+                                        'b_u2':model.sed_model.b_u2,
+                                        'b_u3':model.sed_model.b_u3,
+                                        'b_u4':model.sed_model.b_u4,
+                                        'b_v1':model.sed_model.b_v1,
+                                        'b_v2':model.sed_model.b_v2,
+                                       'W_AE':model.sed_model.W_AE})
+        saver.restore(self.sess,self.pretrain_path+'/sed/sed')
+        print('Pretained weights are loaded from: ' + self.pretrain_path + '/sed/sed')
                 
     def load_neumf_gmf(self,model):
         saver = tf.train.Saver({'user_embeddings':model.neumf_gmf_model.user_embeddings,

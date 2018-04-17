@@ -1,10 +1,11 @@
 import argparse
+import sys
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run NeuCDCF.")
+    parser = argparse.ArgumentParser(description="Run NeuCDCF.")    
     parser.add_argument('--method', nargs='?', default='gcmf', help='gcmf,sed,neucdcf')
-    parser.add_argument('--path', nargs='?',default='./data/amazon/book_movie/sparse/100/fold1/',
+    parser.add_argument('--path', nargs='?',default='/home/Studies/NeuCDCF/data/amazon/cd_movie/sparse/100/fold1/',
                         help='Input data path.')
-    parser.add_argument('--dataset', nargs='?', default='book',
+    parser.add_argument('--dataset', nargs='?', default='cd',
                         help='Choose a dataset.')
     parser.add_argument('--epochs', type=int, default=120,
                         help='Number of epochs.')
@@ -24,7 +25,7 @@ def parse_args():
                         help='Specify an optimizer: rmsprop')
     parser.add_argument('--initializer', nargs='?', default='random_normal',
                         help='random_normal,random_uniform,xavier')
-    parser.add_argument('--verbose', type=int, default=1,
+    parser.add_argument('--verbose', type=int, default=1, 
                         help='Show performance per X iterations')
     parser.add_argument('--out', type=int, default=1,
                         help='Whether to save the trained model.')

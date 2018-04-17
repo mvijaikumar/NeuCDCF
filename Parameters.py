@@ -13,6 +13,7 @@ class Parameters(object):
         self.rating_scale     = args.rating_scale
         self.dp_keep_prob     = args.dp_keep_prob
         self.alpha            = args.alpha
+        self.noise            = 0.0 #args.noise # new
         
         self.num_users        = dataset.number_of_users
         self.num_items        = dataset.number_of_items
@@ -26,10 +27,7 @@ class Parameters(object):
         self.num_test_instances  = len(dataset.testArrQuadruplets[0])
         
         self.method     = args.method
-        if args.cdcf=='yes': 
-            self.cdcf_flag  = True
-        else:
-            self.cdcf_flag = False
+        self.cdcf_flag  = True
             
         if args.stopping_criteria == 1:
             self.stopping_criteria = True
@@ -78,10 +76,7 @@ class Parameters(object):
         #self.valid_clip = args.clip
         self.rating_min_val   = args.rating_min_val
         self.rating_max_val   = args.rating_max_val
-        if args.analysis == 1:
-            self.analysis   = True
-        else:
-            self.analysis   = False
+        self.analysis   = False
         
         self.keep_prob_layer = args.keep_prob_layer
         

@@ -1,15 +1,16 @@
 import tensorflow as tf
 import numpy as np
 from GCMF import GCMF
-from MLP import MLP
-from SDAE import SDAE
-from GCMF_MLP import GCMF_MLP
-from GCMF_SDAE import GCMF_SDAE
-from GCMF_MLP_SDAE import GCMF_MLP_SDAE
+from SED import SED
+from GCMF_SED import GCMF_SED
+#from MLP import MLP
+#from SED_N import SED_N
+#from GCMF_MLP import GCMF_MLP
+
+#from GCMF_MLP_SED import GCMF_MLP_SED
 
 class NeuCDCF(object):
     def __init__(self,params):
-        print ("CHANGE KEY: valid clip")
         self.num_users        = params.num_users
         self.num_items        = params.num_items
         self.method           = params.method
@@ -19,7 +20,6 @@ class NeuCDCF(object):
         self.mu_source        = params.mu_source
         self.mu_target        = params.mu_target
         self.initializer      = params.initializer
-        #self.valid_clip       = params.valid_clip
         self.rating_min_val   = params.rating_min_val
         self.rating_max_val   = params.rating_max_val
         
@@ -32,9 +32,8 @@ class NeuCDCF(object):
         self.keep_prob          = tf.placeholder(tf.float32, name='keep_prob') 
         self.keep_prob_layer    = tf.placeholder(tf.float32, name='keep_prob_layer') 
         self.domain_indices     = tf.placeholder(tf.int32,   shape=[None],name='domain_indices')
-        self.valid_clip        = tf.placeholder(tf.float32,   name='valid_clip')
-        #self.valid_clip        = tf.placeholder_with_default(input, shape, name=None)
-        
+        self.valid_clip         = tf.placeholder(tf.float32,   name='valid_clip')
+        self.cur_batch_size     = tf.placeholder(tf.int32,   name='cur_batch_size')
             
         self.mu_embeddings      = tf.Variable(tf.constant([self.mu_target,self.mu_source] 
                                                 ,dtype=tf.float32),
@@ -67,30 +66,44 @@ class NeuCDCF(object):
                                         self.item_indices,self.true_rating,
                                         self.keep_prob,self.keep_prob_layer,self.domain_indices)
             self.pred_rating_model = self.mlp_model.pred_rating
-        elif self.method == 'sdae':
-            self.sdae_model  = SDAE(self.params)
-            self.sdae_model.define_model(self.user_indices,self.user_cdcf_indices,
-                                        self.item_indices,self.true_rating,
-                                         self.keep_prob,self.keep_prob_layer,self.domain_indices)
-            self.pred_rating_model = self.sdae_model.pred_rating
+        elif self.method == 'sed':
+            self.sed_model  = SED(self.params)
+            self.sed_model.define_model(self.user_indices,self.user_cdcf_indices,
+                                           self.item_indices,self.true_rating,
+                                           self.keep_prob,self.keep_prob_layer,
+                                           self.domain_indices,
+                                           self.cur_batch_size,self.valid_clip)
+            self.pred_rating_model = self.sed_model.pred_rating
+        elif self.method == 'sed_n':
+            self.sed_n_model  = SED_N(self.params)
+            self.sed_n_model.define_model(self.user_indices,self.user_cdcf_indices,
+                                           self.item_indices,self.true_rating,
+                                           self.keep_prob,self.keep_prob_layer,
+                                           self.domain_indices,
+                                           self.cur_batch_size,self.valid_clip)
+            self.pred_rating_model = self.sed_n_model.pred_rating
         elif self.method == 'gcmf_mlp':
             self.gcmf_mlp_model  = GCMF_MLP(self.params)
             self.gcmf_mlp_model.define_model(self.user_indices,self.user_cdcf_indices,
                                         self.item_indices,self.true_rating,
                                         self.keep_prob,self.keep_prob_layer,self.domain_indices)
             self.pred_rating_model = self.gcmf_mlp_model.pred_rating
-        elif self.method == 'gcmf_sdae':
-            self.gcmf_sdae_model  = GCMF_SDAE(self.params)
-            self.gcmf_sdae_model.define_model(self.user_indices,self.user_cdcf_indices,
-                                        self.item_indices,self.true_rating,
-                                        self.keep_prob,self.keep_prob_layer,self.domain_indices)
-            self.pred_rating_model= self.gcmf_sdae_model.pred_rating
-        elif self.method == 'gcmf_mlp_sdae':
-            self.gcmf_mlp_sdae_model  = GCMF_MLP_SDAE(self.params)
-            self.gcmf_mlp_sdae_model.define_model(self.user_indices,self.user_cdcf_indices,
-                                        self.item_indices,self.true_rating,
-                                        self.keep_prob,self.keep_prob_layer,self.domain_indices)
-            self.pred_rating_model = self.gcmf_mlp_sdae_model.pred_rating
+        elif self.method == 'gcmf_sed':
+            self.gcmf_sed_model  = GCMF_SED(self.params)
+            self.gcmf_sed_model.define_model(self.user_indices,self.user_cdcf_indices,
+                                           self.item_indices,self.true_rating,
+                                           self.keep_prob,self.keep_prob_layer,
+                                           self.domain_indices,
+                                           self.cur_batch_size,self.valid_clip)
+            self.pred_rating_model= self.gcmf_sed_model.pred_rating
+        elif self.method == 'gcmf_mlp_sed':
+            self.gcmf_mlp_sed_model  = GCMF_MLP_SED(self.params)
+            self.gcmf_mlp_sed_model.define_model(self.user_indices,self.user_cdcf_indices,
+                                           self.item_indices,self.true_rating,
+                                           self.keep_prob,self.keep_prob_layer,
+                                           self.domain_indices,
+                                           self.cur_batch_size,self.valid_clip)
+            self.pred_rating_model = self.gcmf_mlp_sed_model.pred_rating
         #====    
         '''
         self.pred_rating    = (self.pred_rating_model +
@@ -111,21 +124,25 @@ class NeuCDCF(object):
         elif self.method == 'mlp':
             self.mlp_model.define_loss(loss_type=loss_type)
             self.regularization_loss = self.mlp_model.regularization_loss
-        elif self.method =='sdae':
-            self.sdae_model.define_loss(loss_type=loss_type)
-            self.regularization_loss = self.sdae_model.regularization_loss
-            self.recon_error += self.sdae_model.recon_error
+        elif self.method =='sed':
+            self.sed_model.define_loss(loss_type=loss_type)
+            self.regularization_loss = self.sed_model.regularization_loss
+            self.recon_error += self.sed_model.recon_error
+        elif self.method =='sed_n':
+            self.sed_n_model.define_loss(loss_type=loss_type)
+            self.regularization_loss = self.sed_n_model.regularization_loss
+            self.recon_error += self.sed_n_model.recon_error
         elif self.method =='gcmf_mlp':
             self.gcmf_mlp_model.define_loss(loss_type=loss_type)
             self.regularization_loss = self.gcmf_mlp_model.regularization_loss
-        elif self.method =='gcmf_sdae':
-            self.gcmf_sdae_model.define_loss(loss_type=loss_type)
-            self.regularization_loss = self.gcmf_sdae_model.regularization_loss
-            self.recon_error += self.gcmf_sdae_model.recon_error
-        elif self.method =='gcmf_mlp_sdae':
-            self.gcmf_mlp_sdae_model.define_loss(loss_type=loss_type)
-            self.regularization_loss = self.gcmf_mlp_sdae_model.regularization_loss
-            self.recon_error += self.gcmf_mlp_sdae_model.recon_error
+        elif self.method =='gcmf_sed':
+            self.gcmf_sed_model.define_loss(loss_type=loss_type)
+            self.regularization_loss = self.gcmf_sed_model.regularization_loss
+            self.recon_error += self.gcmf_sed_model.recon_error
+        elif self.method =='gcmf_mlp_sed':
+            self.gcmf_mlp_sed_model.define_loss(loss_type=loss_type)
+            self.regularization_loss = self.gcmf_mlp_sed_model.regularization_loss
+            self.recon_error += self.gcmf_mlp_sed_model.recon_error
             
         self.mse_loss = tf.losses.mean_squared_error(self.true_rating,self.pred_rating)
         self.mae_loss = tf.losses.absolute_difference(self.true_rating,self.pred_rating)
