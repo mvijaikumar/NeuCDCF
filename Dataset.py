@@ -6,9 +6,8 @@ class Dataset(object):
     def __init__(self, path, cdcf_flag=False):
         train_suffix = ".train.rating"
         print 'path: ' + path
-        if cdcf_flag==True:
-            path   = path.replace("//","/")
-            train_suffix = "_"+path.split("/")[-5].split("_")[1]+ train_suffix
+        path   = path.replace("//","/")
+        train_suffix = "_"+path.split("/")[-5].split("_")[1]+ train_suffix
         print ('dataset path: ' + path + train_suffix)
         self.get_user_item_count(path + train_suffix)
         self.get_item_count_domainwise(path + train_suffix)
