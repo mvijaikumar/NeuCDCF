@@ -3,9 +3,9 @@ import sys
 def parse_args():
     parser = argparse.ArgumentParser(description="Run NeuCDCF.")    
     parser.add_argument('--method', nargs='?', default='gcmf', help='gcmf,sed,neucdcf')
-    parser.add_argument('--path', nargs='?',default='/home/Studies/NeuCDCF/data/amazon/cd_movie/sparse/100/fold1/',
+    parser.add_argument('--path', nargs='?',default='./data/amazon/book_movie/sparse/100/fold1/',
                         help='Input data path.')
-    parser.add_argument('--dataset', nargs='?', default='cd',
+    parser.add_argument('--dataset', nargs='?', default='book',
                         help='Choose a dataset.')
     parser.add_argument('--epochs', type=int, default=120,
                         help='Number of epochs.')
