@@ -18,3 +18,9 @@ python NeuCDCF_main.py --help
 Look at the Arguments.py file for an example configuration
 ## Dataset format (Tab separated)
 userid  itemid  rating  domain_index
+
+Amazon Movie (source)-Book (target)  link: will be updated soon 
+Amazon Movie (source)-Music (target) link: will be updated soon
+
+Douban Movie (soure)-Book (target) link: will be updated soon
+Douban Music (soure)-Book (target) link: will be updated soon
