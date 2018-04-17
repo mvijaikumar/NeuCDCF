@@ -1,34 +1,30 @@
 import argparse
-import sys
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run NeuCDCF.")    
-    parser.add_argument('--method', nargs='?', default='gcmf', help='gcmf,sdae,gcmf_sdae')
-    parser.add_argument('--path', nargs='?',
-               default='/home/vijai/DEEP_CDCF_FINAL/data/amazon/cd_movie/sparse/20/fold1/',
+    parser = argparse.ArgumentParser(description="Run NeuCDCF.")
+    parser.add_argument('--method', nargs='?', default='gcmf', help='gcmf,sed,neucdcf')
+    parser.add_argument('--path', nargs='?',default='./data/amazon/book_movie/sparse/100/fold1/',
                         help='Input data path.')
-    parser.add_argument('--dataset', nargs='?', default='cd',
+    parser.add_argument('--dataset', nargs='?', default='book',
                         help='Choose a dataset.')
-    parser.add_argument('--cdcf', nargs='?',default='yes', #1
-                        help='(yes,no) havng cdcf indicates use of auxiliary domain.')
     parser.add_argument('--epochs', type=int, default=120,
                         help='Number of epochs.')
     parser.add_argument('--batch_size', type=int, default=512,
                         help='Batch size.')
-    parser.add_argument('--num_factors', type=int, default=64,
+    parser.add_argument('--num_factors', type=int, default=32,
                         help='Embedding size.')
     parser.add_argument('--reg_Wh', type=float, default=0.0000,
-                       help="Regularization for weight vector.")
+                        help="Regularization for weight vector.")
     parser.add_argument('--reg_bias', type=float, default=0.000,
-                       help="Regularization for user and item bias embeddings.")
+                        help="Regularization for user and item bias embeddings.")
     parser.add_argument('--reg_lambda', type=float, default=0.000, #5
-                       help="Regularization lambda for user and item embeddings.")
+                        help="Regularization lambda for user and item embeddings.")
     parser.add_argument('--lr', type=float, default=0.005,
                         help='Learning rate.')
     parser.add_argument('--learner', nargs='?', default='rmsprop',
-                        help='Specify an optimizer: adagrad, adam, rmsprop, sgd')
+                        help='Specify an optimizer: rmsprop')
     parser.add_argument('--initializer', nargs='?', default='random_normal',
                         help='random_normal,random_uniform,xavier')
-    parser.add_argument('--verbose', type=int, default=1, 
+    parser.add_argument('--verbose', type=int, default=1,
                         help='Show performance per X iterations')
     parser.add_argument('--out', type=int, default=1,
                         help='Whether to save the trained model.')
@@ -56,6 +52,4 @@ def parse_args():
                         help='(yes-1,no-0).')
     parser.add_argument('--pretrain_path', nargs='?', default='./pretrain',
                         help='path to pretrain directory.')
-    parser.add_argument('--analysis', type=int, default=0,
-                        help='(yes-1,no-0).')
     return parser.parse_args()
