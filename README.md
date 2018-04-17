@@ -19,9 +19,9 @@ Look at the Arguments.py file for an example configuration
 ## Dataset format (Tab separated)
 userid  itemid  rating  domain_index
 
-Amazon Movie (source)-Book (target)  link: will be updated soon 
+Amazon Movie (source)-Book (target)  link: https://www.dropbox.com/sh/sg7kknun6bm0vm9/AACC6JhIiW1lDIFWl9BknDAga?dl=0 
 
-Amazon Movie (source)-Music (target) link: will be updated soon
+Amazon Movie (source)-Music (target) link: https://www.dropbox.com/sh/dhwu8jxpwlmt7rt/AACDdbVBj185QmDOyE02ctJXa?dl=0
 
 
 Douban Movie (soure)-Book (target) link: will be updated soon
