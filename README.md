@@ -16,8 +16,9 @@ python NeuCDCF_main.py --method neucdcf
 python NeuCDCF_main.py --help
 
 Look at the Arguments.py file for an example configuration
-## Dataset format (Tab separated)
-userid  itemid  rating  domain_index
+## Dataset
+
+Format: user_id item_id rating domain_index
 
 Amazon Movie (source)-Book (target)  link: https://www.dropbox.com/sh/sg7kknun6bm0vm9/AACC6JhIiW1lDIFWl9BknDAga?dl=0 
 
