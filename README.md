@@ -24,6 +24,6 @@ Amazon Movie (source)-Book (target)  link: https://www.dropbox.com/sh/sg7kknun6b
 Amazon Movie (source)-Music (target) link: https://www.dropbox.com/sh/dhwu8jxpwlmt7rt/AACDdbVBj185QmDOyE02ctJXa?dl=0
 
 
-Douban Movie (soure)-Book (target) link: will be updated soon
+Douban Movie (soure)-Book (target) link: will be provided on sending e-mail to vijaikumar@iisc.ac.in
 
-Douban Music (soure)-Book (target) link: will be updated soon
+Douban Music (soure)-Book (target) link: will be provided on sending e-mail to vijaikumar@iisc.ac.in
