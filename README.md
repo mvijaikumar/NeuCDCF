@@ -14,6 +14,7 @@ python NeuCDCF_main.py --method sed
 python NeuCDCF_main.py --method neucdcf
 ### To know about more options
 python NeuCDCF_main.py --help
+
 Look at the Arguments.py file for an example configuration
 ## Dataset format (Tab separated)
 userid  itemid  rating  domain_index
