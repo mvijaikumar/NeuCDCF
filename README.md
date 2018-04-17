@@ -12,4 +12,6 @@ python NeuCDCF_main.py --method gcmf
 python NeuCDCF_main.py --method sed
 ### NeuCDCF
 python NeuCDCF_main.py --method neucdcf
-
+### To know about more options
+python NeuCDCF_main.py --help
+Look at example configuration in Arguments.py
