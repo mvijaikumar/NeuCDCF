@@ -1,5 +1,5 @@
 # NeuCDCF
-Source code for Neural Cross Domain Collaborative Filtering with Shared Resources (NeuCDCF)
+Source code for Neural Cross Domain Collaborative Filtering with Shared Entities (NeuCDCF)
 ## Requirements
 1. python 2.7.12
 2. scipy 1.0.0
