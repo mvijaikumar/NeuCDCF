@@ -14,9 +14,7 @@ from Utilities import is_stopping_criterion_reached
 from Batch import Batch
 from Parameters import Parameters
 from NeuCDCF import NeuCDCF
-from Comparison import Comparison
 from Arguments import parse_args
-from Utilities import *
 from Pretrain import Pretrain
 
 if __name__ == '__main__':
@@ -29,20 +27,13 @@ if __name__ == '__main__':
     # Data processing
     t1 = time()
     print('Data loading...')
-    if args.cold_start == 0:
-        dataset = Dataset(filepath,cdcf_flag)
-    else:
-        dataset = Dataset_cold_start(args.path,cdcf_flag)
-        print "cold-start"
+    dataset = Dataset(filepath,cdcf_flag)
         
     user_input,item_input,train_rating,train_domain               = dataset.trainArrQuadruplets
     valid_user_input, valid_item_input, valid_rating,valid_domain = dataset.validArrQuadruplets
     test_user_input, test_item_input, test_rating,test_domain     = dataset.testArrQuadruplets
     params = Parameters(args,dataset)
-    
-    
-    # new
-    print('mean value: ',params.mu,params.mu_source,params.mu_target)
+
     #cdcf
     user_cdcf_input       = params.num_users * train_domain + user_input
     valid_user_cdcf_input = params.num_users * valid_domain + valid_user_input
@@ -61,10 +52,7 @@ if __name__ == '__main__':
     print("Method: %s"%(params.method.upper()))    
     t1 = time()
     
-    if params.method in ['cmf','cccfnet','mvdnn','neumf_gmf','neumf_mlp','neumf']:
-        model = Comparison(params)
-    else:
-        model = NeuCDCF(params)
+    model = NeuCDCF(params)
     model.define_model()
     model.define_loss('all')
     print "Model definition completed: ",time()-t1
@@ -80,7 +68,7 @@ if __name__ == '__main__':
         sess.run(init)
         if params.pretrain_load == True:
             pretrain.load(model)
-                
+
         best_mae,   best_test_mae,best_iter   = 100,100, -1
         best_mse, best_test_mse,best_mse_iter = 200,200, -1
         history_mae = []
@@ -88,7 +76,7 @@ if __name__ == '__main__':
         batch = Batch(params.num_train_instances,params.batch_size,shuffle=True)
         batch_valid = Batch(params.num_valid_instances,params.batch_size,shuffle=False)
         batch_test  = Batch(params.num_test_instances,params.batch_size,shuffle=False)
-                
+
         for epoch_num in range(params.num_epochs+1):
             t1 = time()
             mae_train,mse_train = 0.0,0.0
@@ -96,7 +84,7 @@ if __name__ == '__main__':
             while batch.has_next_batch():
                 shuff_batch = batch.get_next_batch_indices()
                 bsiz = len(shuff_batch)
-                
+
                 feed_dict_train = {model.user_indices:user_input[shuff_batch],
                            model.user_cdcf_indices:user_cdcf_input[shuff_batch],
                            model.item_indices:item_input[shuff_batch],
@@ -193,7 +181,6 @@ if __name__ == '__main__':
                     break
                     
             
-        #error_plot.plot()
         plot_path =  result_file.replace(result_file.split('/')[-1],"") + params.method + '/' + args.path.replace("//","/").replace("/","_") + 'fact'+str(params.num_factors)
         print "plot path: " + plot_path
         error_plot.plot(True,plot_path)
@@ -205,4 +192,3 @@ if __name__ == '__main__':
         result_fp.write("""bst_iter %d: valid_mae = %.4f test_mae = %.4f mse_itr %d: valid_rmse = %.4f test_rmse = %.4f %s \n"""% (best_iter, best_mae,best_test_mae,
                 best_mse_iter,math.sqrt(best_mse),math.sqrt(best_test_mse),args))
         result_fp.close()
-        
