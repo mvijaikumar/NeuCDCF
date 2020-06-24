@@ -1,4 +1,6 @@
 def is_stopping_criterion_reached(mae_list):
+    ''' function to stop the iterations when stopping 
+    criterian is reached'''
     num_iter = len(mae_list)
     if num_iter<6:
         return False
